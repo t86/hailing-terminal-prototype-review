@@ -1,7 +1,7 @@
 'use strict';
 // Interactive review data stays in this page; it is not a device or production database.
 (() => {
-  const headers = ['终端名称', '序列号', 'IP地址', '端口', '项目分组', '位置'];
+  const headers = ['终端名称', '序列号', 'IP地址', '端口', '项目分组', '安装位置'];
   let pending = null;
   function allowed() { return !!state.user && !readOnly() && state.platform; }
   function saveWorkbook(rows, filename) {
@@ -23,7 +23,7 @@
   C.importTerminalExcel = function () {
     if (!allowed()) return toast('当前账号不能导入终端', 'error');
     pending = null;
-    modal('导入终端', '<p>选择按模板填写的 Excel 文件。终端名称、序列号、IP 地址和端口为必填。端口可在终端详情查看，常用值为 80；分组需在系统中已存在。</p><p>导入前可查看校验结果。导入后设备仍需核验。</p><input id="terminal-excel-file" type="file" accept=".xlsx,.xls,.csv" aria-label="选择终端台账文件">', btn('取消','C.closeModal()') + btn('读取并预览','C.previewTerminalExcel()','primary'));
+    modal('导入终端', '<p>选择按模板填写的 Excel 文件。终端名称、序列号、IP 地址和端口为必填。端口可在终端详情查看，常用值为 80；分组需在系统中已存在。安装位置选填，例如“1 栋 2 单元”；如果终端名称已包含具体位置，可以留空。</p><p>导入前可查看校验结果。导入后设备仍需核验。</p><input id="terminal-excel-file" type="file" accept=".xlsx,.xls,.csv" aria-label="选择终端台账文件">', btn('取消','C.closeModal()') + btn('读取并预览','C.previewTerminalExcel()','primary'));
   };
   function classify(rows) {
     const names = new Set(state.devices.map(d => d.project).concat(state.extraGroups || []));
