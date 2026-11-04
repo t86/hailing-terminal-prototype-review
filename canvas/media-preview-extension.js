@@ -3,7 +3,7 @@
   const selectedFiles = { value: [] };
   const previews = new Map();
   const seeded = new Map([
-    [1, 'media-preview-demo.mp4'], [2, 'media-preview-demo.mp4'],
+    [1, 'media-preview-demo.mp4?v=2'], [2, 'media-preview-demo.mp4?v=2'],
     [3, 'media-preview-image.svg'], [4, 'media-preview-logo.svg'],
   ]);
   const srcFor = (item) => previews.get(item.id) || seeded.get(item.id) || '';
