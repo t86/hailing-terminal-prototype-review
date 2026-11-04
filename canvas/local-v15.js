@@ -39,9 +39,9 @@
   /* ---------- 首次启动 / 登录 / 恢复码 ---------- */
   const baseLogin=login;
   login=function(){
-    if(!users().length)return `<div class="login-page"><section class="card login-card"><h1>首次使用：创建管理员</h1>${notice('本机还没有任何账号。创建的第一个账号为管理员，可离线使用；创建后会显示一次性恢复码。')}${field('姓名','fr-name','')}${field('账号','fr-account','')}${field('密码（至少8位）','fr-pw','','password')}${field('再次输入密码','fr-pw2','','password')}${btn('创建管理员','C.confirmFirstRun()','primary full')}</section></div>`;
+    if(!users().length)return `<div class="login-page"><section class="card login-card"><h1>首次使用：创建管理员</h1>${notice('本机还没有账号。请创建第一个管理员；创建后会显示一次性恢复码。此在线原型仅作演示，账号和恢复码只保存在当前页面内，刷新后会重置，请勿使用真实密码。')}${field('姓名','fr-name','')}${field('账号','fr-account','')}${field('密码（至少8位）','fr-pw','','password')}${field('再次输入密码','fr-pw2','','password')}${btn('创建管理员','C.confirmFirstRun()','primary full')}</section></div>`;
     let html=accounts[state.reviewRole]?baseLogin():`<div class="login-page"><section class="card login-card"><h1>本机登录</h1><form onsubmit="event.preventDefault();C.login()"><div class="login-fields">${field('账号','login-account','')}${field('密码','login-password','','password')}${btn('登录','C.login()','primary full')}${state.loginError?notice(h(state.loginError),'red'):''}</div></form></section></div>`;
-    const extra=(L.postRestore?notice('已从备份恢复。请重新登录；登录后采集引擎先只读核验设备，不重放任何设备写操作。','amber'):'')+`<div class="login-recovery">${btn('忘记密码？使用恢复码','C.recoverPassword()','text sm')}${btn('模拟全新安装（审阅）','C.simulateFreshInstall()','text sm')}</div>`;
+    const extra=(L.postRestore?notice('已从备份恢复。请重新登录；登录后采集引擎先只读核验设备，不重放任何设备写操作。','amber'):'')+`<div class="login-recovery">${btn('忘记密码？使用恢复码','C.recoverPassword()','text sm')}</div>`;
     return html.includes('<div class="login-fields">')?html.replace('<div class="login-fields">',extra+'<div class="login-fields">'):html+extra;
   };
   C.simulateFreshInstall=function(){if(state.user)return toast('请先退出登录','error');for(const k of Object.keys(accounts))delete accounts[k];state.extraUsers.length=0;L.recovery={};render();};
@@ -54,7 +54,7 @@
     state.extraUsers.push({name,account,role:'admin',scope:state.devices.map(d=>d.id),initial:name[0],pwdHash:digest(a)});
     L.recovery[account]={hash:digest(code),used:false};L.shownCode=code;
     render();
-    modal('请保存恢复码',`<p>恢复码只显示这一次，本机只保存其校验值。忘记密码时可用它重设一次。</p><p class="recovery-code"><strong>${h(code)}</strong></p>`,btn('我已保存','C.closeModal()','primary'));
+    modal('请保存恢复码',`<p>恢复码只显示这一次，可用于重设密码。此原型仅在当前页面中模拟保存，刷新后会重置。</p><p class="recovery-code"><strong>${h(code)}</strong></p>`,btn('我已保存','C.closeModal()','primary'));
   };
   const baseLoginFn=C.login;
   C.login=function(){const name=pw('login-account').trim(),p=pw('login-password');const u=findUser(name);
@@ -66,7 +66,7 @@
     const r=baseLoginAs.apply(C,arguments);
     if(state.user&&L.postRestore){L.postRestore=false;L.verifyReadOnly=true;state.devices.forEach(d=>{d.sampledAt=null;});toast('已恢复：采集引擎正在只读核验设备状态，不重放写操作','success');}
     return r;};
-  C.recoverPassword=function(){if(state.user)return toast('请先退出登录','error');modal('使用恢复码重设密码',`${field('账号','rc-account','')}${field('恢复码','rc-code','')}${field('新密码（至少8位）','rc-pw','','password')}${field('再次输入新密码','rc-pw2','','password')}<p class="hint">恢复码只能使用一次，使用后请登录并生成新的恢复码。审阅提示：预置管理员 liming 的演示恢复码为 ${DEMO_RECOVERY}。</p>`,btn('取消','C.closeModal()')+btn('重设密码','C.confirmRecover()','primary'));};
+  C.recoverPassword=function(){if(state.user)return toast('请先退出登录','error');modal('使用恢复码重设密码',`${field('账号','rc-account','')}${field('恢复码','rc-code','')}${field('新密码（至少8位）','rc-pw','','password')}${field('再次输入新密码','rc-pw2','','password')}<p class="hint">恢复码只能使用一次，使用后请登录并生成新的恢复码。</p>`,btn('取消','C.closeModal()')+btn('重设密码','C.confirmRecover()','primary'));};
   C.confirmRecover=function(){const account=pw('rc-account').trim(),code=pw('rc-code').trim(),a=pw('rc-pw'),b=pw('rc-pw2');const u=findUser(account),rec=L.recovery[account];
     if(!u||!rec||rec.used||digest(code)!==rec.hash){toast('恢复码无效或已使用','error');return {ok:false};}
     if(!pwOk(a,b)){toast('新密码至少8位且两次一致','error');return {ok:false};}

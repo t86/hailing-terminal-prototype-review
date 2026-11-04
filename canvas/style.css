@@ -80,3 +80,6 @@ textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid #8db8fb;outlin
   .task-layout{grid-template-columns:minmax(0,1fr)}
   .task-layout>section:first-child{max-height:240px;overflow:auto;overscroll-behavior:contain}
 }
+
+/* 审核版隐藏开发工具，实际操作流程保持可用。 */
+#reviewbar { display: none !important; }

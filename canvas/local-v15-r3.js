@@ -120,7 +120,7 @@
   login = function () {
     if (L.pendingChange) { const u = findUser(L.pendingChange.account); return `<div class="login-page"><section class="card login-card"><h1>首次登录：请修改密码</h1>${u?.resetNotice ? notice(h(u.resetNotice), 'amber') : ''}${notice('密码由管理账号设置或重置。修改完成前不能进入任何页面或执行任何操作。')}${field('当前（临时）密码', 'cp-old', '', 'password')}${field('新密码（8–128位，含字母和数字）', 'cp-new', '', 'password')}${field('再次输入新密码', 'cp-new2', '', 'password')}${btn('修改并登录', 'C.confirmChangePassword()', 'primary full')}${btn('返回', 'C.cancelChangePassword()', 'text sm')}</section></div>`; }
     let html = prevLoginView();
-    const info = (L.locked ? notice(`界面已锁定（${h(L.locked)}）。采集仍在运行，请重新登录。`) : '') + `<p class="hint">采集引擎随应用运行，按全台账只读采集；登录后只显示你授权范围内的终端。</p>`;
+    const info = (L.locked ? notice(`界面已锁定（${h(L.locked)}）。采集仍在运行，请重新登录。`) : '');
     return html.includes('<div class="login-fields">') ? html.replace('<div class="login-fields">', info + '<div class="login-fields">') : html + info;
   };
 
@@ -351,7 +351,7 @@
   const prevAdmin = admin;
   admin = function () { let html = prevAdmin(); if (!state.user || readOnly() || state.adminTab !== 'users') return html;
     const rows = users().map(u => `<tr><td>${h(u.account)}</td><td>${u.allDevices ? '全台账' : (u.groups || []).map(h).join('、') || '—'}</td><td>${(u.scope || []).length && !u.allDevices ? (u.scope || []).length + ' 台' : '—'}</td><td>${effScope(u).length} 台</td><td>${canManage(u).ok ? '可管理' : '超出你的范围'}</td></tr>`).join('');
-    return html + `<section class="card"><h2>授权构成</h2><p class="hint">有效范围 = 全台账，或 授权分组当前成员 ∪ 单台授权。管理员与维护为管理账号，授权范围固定为全台账；分组/单台范围只适用于只读账号（不含子分组）。受范围限制的账号只读，不能管理任何账号。</p><table class="table"><thead><tr><th>账号</th><th>授权分组</th><th>单台授权</th><th>有效范围</th><th>你的权限</th></tr></thead><tbody>${rows}</tbody></table>${btn('添加受限维护账号（审阅）', 'C.reviewSeedLimitedMaint()', 'text sm')}</section>`; };
+    return html + `<section class="card"><h2>授权构成</h2><p class="hint">有效范围 = 全台账，或 授权分组当前成员 ∪ 单台授权。管理员与维护为管理账号，授权范围固定为全台账；分组/单台范围只适用于只读账号（不含子分组）。受范围限制的账号只读，不能管理任何账号。</p><table class="table"><thead><tr><th>账号</th><th>授权分组</th><th>单台授权</th><th>有效范围</th><th>你的权限</th></tr></thead><tbody>${rows}</tbody></table></section>`; };
   C.reviewSeedLimitedMaint = function () { if (findUser('zhao')) return findUser('zhao'); const u = {name:'赵工（受限）', account:'zhao', role:'maint', initial:'赵', scope:[], groups:['滨江雅苑'], allDevices:false}; state.extraUsers.push(u); render(); return u; };
 
   const prevDiag = C.diagnostics; C.diagnostics = function () { const r = prevDiag.apply(C, arguments); const root = document.getElementById('modal-root'); if (root?.innerHTML) root.innerHTML = root.innerHTML.replace('</p>', `</p><p class="hint">采集器：${L.collector.running ? '运行中' : '已停止'} · ${isGlobal(actor()) ? `覆盖本机全台账 ${state.devices.length} 台（仅显示数量）` : `覆盖本机全台账（总数仅全台账管理账号可见）；你可查看 ${visibleDevices().length} 台`} · 登出或锁定不停止。</p>`); return r; };

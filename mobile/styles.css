@@ -16,3 +16,7 @@
 .history-connect-label{display:block;color:var(--blue);font-size:12px;font-weight:700;margin-top:8px}
 
 .network-pair .card{border-left:3px solid #8db3fa}.network-pair .card:nth-child(2){border-left-color:#70b4a1}.network-pair .card-heading h3{font-size:14px}.network-observations{font-size:12px;color:var(--muted);margin:12px 0}.network-observations summary{font-size:13px!important}.network-attempt{padding:10px 0;border-top:1px solid var(--border)}.network-attempt strong{display:block;font-size:12px;color:var(--ink)}.network-attempt span{display:block;font-size:11px;line-height:1.8;margin-top:5px}.card .network-pair .card{padding:12px}.card .network-pair .kv{font-size:12px}.card .network-pair .kv strong{font-size:12px}
+
+/* 审核版只展示手机操作界面。 */
+.review-panel { display: none !important; }
+.review-layout { gap: 0; }

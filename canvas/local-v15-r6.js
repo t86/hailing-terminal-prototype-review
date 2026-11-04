@@ -73,7 +73,7 @@
     if (MANAGER.has(role) && (groups.length || scope.length)) return deny('MANAGER_MUST_BE_GLOBAL', '管理员与维护固定为全台账，不能选择分组或单台终端；如需限定范围请选择“只读”');
     const before = state.extraUsers.length; const r = prevConfirmAdd6.apply(C, arguments);
     if (state.extraUsers.length > before) { const u = state.extraUsers[state.extraUsers.length - 1];
-      if (MANAGER.has(u.role)) normalize(u); else { u.allDevices = false; u.groups = groups.filter(g => state.devices.some(d => d.project === g)); } }
+      if (MANAGER.has(u.role)) normalize(u); else { u.allDevices = false; u.groups = groups.filter(g => state.devices.some(d => d.project === g)); } render(); }
     return r;
   };
   // 受范围限制的只读账号（审阅用）：保留 B02 范围；旧审阅入口名沿用，语义改为只读
